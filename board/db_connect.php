@@ -1,57 +1,56 @@
-<!--DB Create query
-CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `test`;
-
-CREATE TABLE IF NOT EXISTS `board` (
-    `num` int(11) NOT NULL AUTO_INCREMENT,
+<!--DB Create query (테이블 생성 시 복사용)
+// title : 제목
+// name : 작성자
+// pass : 비밀번호
+// content : 내용
+// day : 작성일
+CREATE TABLE board (
+num INT NOT NULL AUTO_INCREMENT,
+title CHAR(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+name CHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+pass CHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+content TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+day CHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+PRIMARY KEY(num)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 -->
 
 <?php
-####### 한글 인코딩 설정 #######
-################################
+/////////////// 한글 인코딩 설정 //////////////////
 header('Content-Type: text/html; charset=UTF-8');
 ini_set('default_charset', 'UTF-8');
-################################
+/////////////////////////////////////////////////
 
-##### 데이터베이스 연결 정보 #####
-################################
+//////////// 데이터베이스 연결 정보 //////////////
 $DB_SERVER = "localhost:3307";
 $DB_USER = "user";
 $DB_PASSWD = "epdlxjdpeb!1";
 $DB_NAME = "test";
-################################
+///////////////////////////////////////////////
 
-// DB 클래스 파일 포함
-require_once $_SERVER["DOCUMENT_ROOT"]."/db_data/DB_Class_mysql.php";
+// DB 클래스 파일 포함 (같은 폴더에 있는 파일)
+require_once "DB_Class_mysql.php";
+
+// DB 연결 후 인코딩 설정 함수
+function set_db_encoding($db) {
+    $db->sql("SET NAMES utf8mb4");
+    $db->sql("SET CHARACTER SET utf8mb4");
+    $db->sql("SET COLLATION_CONNECTION='utf8mb4_unicode_ci'");
+}
 
 // DB 연결 함수
 function get_db_connection() {
-    // DB_Class_mysql.php 파일에 선언된 전역 변수 사용
     global $DB_SERVER, $DB_USER, $DB_PASSWD, $DB_NAME;
-    
-    // DB 클래스 인스턴스 생성
     $db = new DB_mysql_class();
-    
-    // 추가 인코딩 설정
-    $db->sql("SET NAMES utf8mb4");
-    $db->sql("SET CHARACTER SET utf8mb4");
-    $db->sql("SET COLLATION_CONNECTION='utf8mb4_unicode_ci'");
-    
+    set_db_encoding($db);
     return $db;
 }
 
-// DB Tool 함수 (CRUD 작업용)
+// DB Tool 함수 (CRUD 위해 사용)
 function get_db_tool() {
     global $DB_SERVER, $DB_USER, $DB_PASSWD, $DB_NAME;
-    
-    // DB Tool 인스턴스 생성
     $db = new DB_mysql_tool();
-    
-    // 추가 인코딩 설정
-    $db->sql("SET NAMES utf8mb4");
-    $db->sql("SET CHARACTER SET utf8mb4");
-    $db->sql("SET COLLATION_CONNECTION='utf8mb4_unicode_ci'");
-    
+    set_db_encoding($db);
     return $db;
 }
 

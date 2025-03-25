@@ -5,6 +5,7 @@ require_once 'db_connect.php';
 // 게시물 번호 검증
 $num = isset($_GET['num']) ? (int)$_GET['num'] : 0;
 
+// 게시물 번호가 없거나 0보다 작으면 목록 페이지로 이동
 if ($num <= 0) {
     header("Location: list.php");
     exit;
@@ -15,7 +16,6 @@ $db = get_db_connection();
 
 // 폼 제출 처리
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 폼 데이터 받기
     $title = trim($_POST['title'] ?? '');
     $content = trim($_POST['content'] ?? '');
     $pass = trim($_POST['pass'] ?? '');
@@ -35,21 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "비밀번호를 입력해주세요.";
     }
     
-    // 비밀번호 확인
     $db->sql("SELECT pass FROM board WHERE num = $num");
     $db->fetch_row();
     $stored_password = $db->f('pass');
     
+    // 비밀번호 검증
     if ($pass !== $stored_password) {
         $errors[] = "비밀번호가 일치하지 않습니다.";
     }
     
     // 오류가 없으면 업데이트
     if (empty($errors)) {
-        // 오늘 날짜
         $today = date("Y.m.d");
-        
-        // 데이터 준비 및 업데이트 - 단순 이스케이프 사용
         $title_escaped = htmlspecialchars($title);
         $content_escaped = htmlspecialchars($content);
         
@@ -61,34 +58,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
         $result = $db->sql($sql);
         
-        // DB 연결 종료
         $db->DB_close();
         
-        // 성공 시 게시물 보기 페이지로 이동
         if ($result) {
+            // 수정 성공 시 게시물 보기 페이지로 이동
             header("Location: view.php?num=$num");
             exit;
         } else {
+            // 수정 실패 시 오류 메시지 추가
             $errors[] = "게시물 수정 중 오류가 발생했습니다.";
         }
     }
 } else {
-    // 게시물 조회
+    // 게시물 데이터 조회
     $post = $db->fetchArray("SELECT title, content, name FROM board WHERE num = $num");
     
+    // 게시물이 존재하지 않으면 목록 페이지로 이동
     if (!$post) {
         $db->DB_close();
         header("Location: list.php");
         exit;
     }
     
-    // 게시물 데이터
     $title = $post['title'];
     $content = $post['content'];
     $name = $post['name'];
 }
 ?>
 
+<!-- 게시글 수정 페이지 화면 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>

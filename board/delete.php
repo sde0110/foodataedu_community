@@ -6,6 +6,7 @@ require_once 'db_connect.php';
 $num = isset($_GET['num']) ? (int)$_GET['num'] : 0;
 
 if ($num <= 0) {
+    // 게시물 번호가 없거나 0보다 작으면 목록 페이지로 이동
     header("Location: list.php");
     exit;
 }
@@ -24,37 +25,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // 비밀번호가 일치하면 삭제
     if ($pass === $stored_password) {
-        // 직접 SQL 삭제 쿼리 실행
-        $sql = "DELETE FROM board WHERE num = $num";
-        $result = $db->sql($sql);
-        
-        // DB 연결 종료
+        $db->sql("DELETE FROM board WHERE num = $num");
         $db->DB_close();
-        
-        // 성공 시 목록 페이지로 이동
-        if ($result) {
-            header("Location: list.php");
-            exit;
-        } else {
-            $error = "게시물 삭제 중 오류가 발생했습니다.";
-        }
+        header("Location: list.php");
+        exit;
     } else {
         $error = "비밀번호가 일치하지 않습니다.";
     }
 } else {
-    // 게시물이 존재하는지 확인
     $post = $db->fetchArray("SELECT title FROM board WHERE num = $num");
     
+    // 게시글이 존재하는지 확인
     if (!$post) {
         $db->DB_close();
         header("Location: list.php");
         exit;
     }
-    
+    // 게시글 제목 가져오기
     $title = $post['title'];
 }
 ?>
 
+<!-- 게시글 삭제 페이지 화면 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -64,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>게시글 삭제</title>
     <?php echo get_common_css(); ?>
 </head>
-<meta charset="UTF-8">
 <body>
     <div class="container">
         <h1>게시글 삭제</h1>

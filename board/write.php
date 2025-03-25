@@ -43,9 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $today = date("Y.m.d");
         
         // SQL 삽입
+        // 특수문자 이스케이프 처리
         $title_escaped = $db->conn->real_escape_string($title);
-        $content_escaped = $db->conn->real_escape_string($content);
-        $name_escaped = $db->conn->real_escape_string($name);
+        $content_escaped = $db->conn->real_escape_string($content); 
+        $name_escaped = $db->conn->real_escape_string($name); 
         
         $sql = "INSERT INTO board(title, name, pass, content, day) 
                 VALUES('$title_escaped', '$name_escaped', '$pass', '$content_escaped', '$today')";
@@ -59,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result) {
             header("Location: list.php");
             exit;
+          // 실패 시 오류 메시지 추가
         } else {
             $errors[] = "게시물 저장 중 오류가 발생했습니다.";
         }
@@ -66,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+<!-- 게시글 작성 페이지 화면 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
