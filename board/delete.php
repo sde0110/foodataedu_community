@@ -5,8 +5,8 @@ require_once 'db_connect.php';
 // 게시물 번호 검증
 $num = isset($_GET['num']) ? (int)$_GET['num'] : 0;
 
+// 게시물 번호가 없거나 0보다 작으면 목록 페이지로 이동
 if ($num <= 0) {
-    // 게시물 번호가 없거나 0보다 작으면 목록 페이지로 이동
     header("Location: list.php");
     exit;
 }

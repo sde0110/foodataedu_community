@@ -32,6 +32,8 @@ $db->sql("SELECT num, title, name, day FROM board ORDER BY day DESC LIMIT $offse
 $display_number = $total_records - $offset;
 ?>
 
+
+<!-- 게시판 목록 페이지 화면 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
